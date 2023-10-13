@@ -12,7 +12,7 @@ Matrix::Matrix(int n, int m)
 }
 
 Matrix::~Matrix(){
-    for(int i = 0; i < size_n; ++i) delete matrix[i];
+    for(int i = 0; i < size_n; ++i) delete matrix[i]; //TROUBLES
     delete []matrix;
 }
 
@@ -68,14 +68,16 @@ void Matrix::matrixInit(){
 double Matrix::matrixDeterminant(){
     double result = 0;
     if(size_n != size_m) exit(SIZE_ERROR);
-    if(size_n == 1){
-        result = matrix[0][0];
-    }else if(size_n == 2){
-        result = matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
-    } else{
-        
+    if(size_n == 1) result = matrix[0][0];
+    else if(size_n == 2){
+        result += matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
+    } else if(size_n > 2){
+        for(int j = 0; j < size_n; ++j){
+            Matrix tempMatrix = matrixMinor(0, j);
+            cout << endl << tempMatrix << endl;
+            result += pow(-1, j) * matrix[0][j] * tempMatrix.matrixDeterminant();
+        }
     }
-
     return result;
 }
 

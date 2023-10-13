@@ -5,13 +5,14 @@ using namespace std;
 
 int main(){
 
-    Matrix newMatrix(3, 3);
-    newMatrix.matrixInit();
-    Matrix newMatrix2 = newMatrix.matrixMinor(1, 1);
-    //cout << newMatrix.matrixDeterminant();
-    cout << "\n\n";
+    int n, m;
+    cout << "Enter matrix size: ";
+    cin >> n >> m;
+    Matrix newMatrix(n, m);
 
-    cout << newMatrix;
-    cout << endl << endl << newMatrix2 << endl;
+    newMatrix.matrixInit();
+    //cout << "\n\n" << newMatrix.matrixMinor(0, 1) << endl;
+    cout << newMatrix.matrixDeterminant() << endl;
+    
     return 0;
 }

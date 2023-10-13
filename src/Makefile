@@ -22,3 +22,6 @@ clean:
 
 leak:
 	valgrind --tool=memcheck --leak-check=yes $(PTR_TARGET)$(TARGET)
+
+cpp:
+	cppcheck --enable=all --suppress=missingIncludeSystem $(PTR_SOURCE)*.cpp
