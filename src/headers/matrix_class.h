@@ -9,8 +9,8 @@ class Matrix{
         friend ostream &operator<<(ostream &os, const Matrix &aMatrix);
         Matrix(int n = 0, int m = 0);               //Matrix init
         ~Matrix();                                  //Matrix delete
-        Matrix(const Matrix &c);                    //Matrix copy
-        Matrix &operator=(const Matrix &matrix);    //Matrix =
+        //Matrix(const Matrix &c);                    //Matrix copy
+        //Matrix &operator=(const Matrix &matrix);    //Matrix =
 
         void matrixInit();
         double matrixDeterminant();

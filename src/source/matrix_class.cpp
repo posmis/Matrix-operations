@@ -8,19 +8,37 @@ Matrix::Matrix(int n, int m)
     size_n = n;
     size_m = m;
     matrix = new double*[size_n];
-    for(int i = 0; i < size_n; ++i) matrix[i] = new double[size_m];
+    if(matrix == NULL) exit(ALLOC_ERROR);
+    for(int i = 0; i < size_n; ++i) {
+        matrix[i] = new double[size_m];
+        if(matrix[i] == NULL) exit(ALLOC_ERROR);
+    }
 }
 
 Matrix::~Matrix(){
-    for(int i = 0; i < size_n; ++i) delete matrix[i]; //TROUBLES
-    delete []matrix;
+    if(matrix != NULL){
+        for(int i = 0; i < size_n; ++i){
+            if(matrix[i] != NULL)
+                delete[] matrix[i]; //TROUBLES
+        }
+        delete[] matrix;
+    }
 }
 
 Matrix::Matrix(const Matrix &cMatrix){
     size_n = cMatrix.size_n;
     size_m = cMatrix.size_m;
     matrix = new double*[size_n];
-    for(int i = 0; i < size_n; ++i) matrix[i] = new double[size_m];
+    if(matrix == NULL) exit(ALLOC_ERROR);
+    for(int i = 0; i < size_n; ++i){
+        matrix[i] = new double[size_m];
+        if(matrix[i] == NULL) exit(ALLOC_ERROR);
+    }
+    for(int i = 0; i < size_n; ++i){
+        for(int j = 0; j < size_m; ++j){
+            matrix[i][j] = cMatrix.matrix[i][j];
+        }
+    }
 }
 
 Matrix &Matrix::operator=(const Matrix &cMatrix){
@@ -73,9 +91,12 @@ double Matrix::matrixDeterminant(){
         result += matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
     } else if(size_n > 2){
         for(int j = 0; j < size_n; ++j){
-            Matrix tempMatrix = matrixMinor(0, j);
-            cout << endl << tempMatrix << endl;
-            result += pow(-1, j) * matrix[0][j] * tempMatrix.matrixDeterminant();
+            //Matrix tempMatrix = matrixMinor(0, j);
+            //cout << endl << tempMatrix << endl;
+            //result += pow(-1, j) * matrix[0][j] * tempMatrix.matrixDeterminant(); //TROUBLES
+            result += pow(-1, j) * matrix[0][j] * matrixMinor(0, j).matrixDeterminant(); //TROUBLES
+            cout << result << endl;
+            //tempMatrix.matrixDestroy();
         }
     }
     return result;
