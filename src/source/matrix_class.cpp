@@ -1,115 +1,92 @@
 #include "../headers/matrix_class.h"
+
 #include "../headers/errors.h"
 
-Matrix::Matrix(int n, int m)
-{
-    if(n < 1) n = 1;
-    if(m < 1) m = 1;
-    size_n = n;
-    size_m = m;
-    matrix = new double*[size_n];
-    if(matrix == NULL) exit(ALLOC_ERROR);
-    for(int i = 0; i < size_n; ++i) {
-        matrix[i] = new double[size_m];
-        if(matrix[i] == NULL) exit(ALLOC_ERROR);
-    }
+Matrix::Matrix(int rows, int cols) {
+    if (rows < 1) rows = 1;
+    if (cols < 1) cols = 1;
+    mRows = rows;
+    mCols = cols;
+
+    matrix = (double **)malloc(mRows * mCols * sizeof(double) + mRows * sizeof(double *));
+    double *pMatrix = (double *)(matrix + mRows);
+    if (matrix == NULL) exit(ALLOC_ERROR);
+    for (int i = 0; i < mRows; ++i) matrix[i] = pMatrix + i * mCols;
 }
 
-Matrix::~Matrix(){
-    if(matrix != NULL){
-        for(int i = 0; i < size_n; ++i){
-            if(matrix[i] != NULL)
-                delete[] matrix[i]; //TROUBLES
-        }
-        delete[] matrix;
-    }
+Matrix::~Matrix() {
+    if (matrix != NULL) free(matrix);
 }
 
-Matrix::Matrix(const Matrix &cMatrix){
-    size_n = cMatrix.size_n;
-    size_m = cMatrix.size_m;
-    matrix = new double*[size_n];
-    if(matrix == NULL) exit(ALLOC_ERROR);
-    for(int i = 0; i < size_n; ++i){
-        matrix[i] = new double[size_m];
-        if(matrix[i] == NULL) exit(ALLOC_ERROR);
-    }
-    for(int i = 0; i < size_n; ++i){
-        for(int j = 0; j < size_m; ++j){
-            matrix[i][j] = cMatrix.matrix[i][j];
-        }
+Matrix::Matrix(const Matrix &cMatrix) {
+    mRows = cMatrix.mRows;
+    mCols = cMatrix.mCols;
+
+    matrix = (double **)malloc(mRows * mCols * sizeof(double) + mRows * sizeof(double *));
+    double *pMatrix = (double *)(matrix + mRows);
+    if (matrix == NULL) exit(ALLOC_ERROR);
+    for (int i = 0; i < mRows; ++i) matrix[i] = pMatrix + i * mCols;
+
+    for (int row = 0; row < mRows; ++row) {
+        for (int col = 0; col < mCols; ++col) matrix[row][col] = cMatrix.matrix[row][col];
     }
 }
 
 Matrix &Matrix::operator=(const Matrix &cMatrix){
     if(this != &cMatrix){
-        for(int i = 0; i < size_n; ++i) delete matrix[i];
-        delete []matrix;
-        size_m = cMatrix.size_m;
-        size_n = cMatrix.size_n;
+        if (matrix != NULL) free(matrix);
+        mRows = cMatrix.mRows;
+        mCols = cMatrix.mCols;
 
-        matrix = new double*[size_n];
-        for(int i = 0; i < size_n; ++i) matrix[i] = new double[size_m];
+        matrix = (double **)malloc(mRows * mCols * sizeof(double) + mRows * sizeof(double *));
+        double *pMatrix = (double *)(matrix + mRows);
+        if (matrix == NULL) exit(ALLOC_ERROR);
+        for (int i = 0; i < mRows; ++i) matrix[i] = pMatrix + i * mCols;
 
-        for(int i = 0; i < size_n; ++i){
-            for(int j = 0; j < size_m; ++j){
-                matrix[i][j] = cMatrix.matrix[i][j];
-            }
+        for (int row = 0; row < mRows; ++row) {
+            for (int col = 0; col < mCols; ++col) matrix[row][col] = cMatrix.matrix[row][col];
         }
     }
     return *this;
 }
 
-ostream &operator<<(ostream &os, const Matrix &aMatrix){
-    for(int i = 0; i < aMatrix.size_n; ++i){
-        for(int j = 0; j < aMatrix.size_m; ++j){
-            os << aMatrix.matrix[i][j];
-            if(j < aMatrix.size_m - 1){
-                os << " ";
-            }
+ostream &operator<<(ostream &os, const Matrix &aMatrix) {
+    for (int row = 0; row < aMatrix.mRows; ++row) {
+        for (int col = 0; col < aMatrix.mCols; ++col) {
+            os << aMatrix.matrix[row][col];
+            if (col < aMatrix.mCols - 1) os << " ";
         }
-        if(i < aMatrix.size_n - 1){
-            os << endl;
-        }
+        if (row < aMatrix.mRows - 1) os << endl;
     }
     return os;
 }
 
-void Matrix::matrixInit(){
-    for(int i = 0; i < size_n; ++i){
-            for(int j = 0; j < size_m; ++j){
-                cin >> matrix[i][j];
-            }
-        }
-}
-
-double Matrix::matrixDeterminant(){
-    double result = 0;
-    if(size_n != size_m) exit(SIZE_ERROR);
-    if(size_n == 1) result = matrix[0][0];
-    else if(size_n == 2){
-        result += matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
-    } else if(size_n > 2){
-        for(int j = 0; j < size_n; ++j){
-            //Matrix tempMatrix = matrixMinor(0, j);
-            //cout << endl << tempMatrix << endl;
-            //result += pow(-1, j) * matrix[0][j] * tempMatrix.matrixDeterminant(); //TROUBLES
-            result += pow(-1, j) * matrix[0][j] * matrixMinor(0, j).matrixDeterminant(); //TROUBLES
-            cout << result << endl;
-            //tempMatrix.matrixDestroy();
-        }
+void Matrix::mInit() {
+    for (int row = 0; row < mRows; ++row) {
+        for (int col = 0; col < mCols; ++col) cin >> matrix[row][col];
     }
-    return result;
 }
 
-Matrix Matrix::matrixMinor(int line_n, int line_m){
-    Matrix newMatrix(size_n - 1, size_m - 1);
-    for(int i = 0, n_i = 0; i < size_n; ++i, ++n_i){
-        if(i == line_n) ++i;
-        for(int j = 0, n_j = 0; j < size_m; ++j, ++n_j){
-            if(j == line_m) ++j;
-            newMatrix.matrix[n_i][n_j] = matrix[i][j];
+Matrix Matrix::mMinor(int line_n, int line_m) {
+    Matrix newMatrix(mRows - 1, mCols - 1);
+    for (int row = 0, i = 0; i < mRows; ++i, ++row) {
+        if (i == line_n) ++i;
+        for (int col = 0, j = 0; j < mCols; ++j, ++col) {
+            if (j == line_m) ++j;
+            newMatrix.matrix[row][col] = matrix[i][j];
         }
     }
     return newMatrix;
+}
+
+double Matrix::mDeterminant() {
+    double result = 0;
+    if (mRows == 2) {
+        result += matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+    } else if (mRows > 2) {
+        for (int j = 0; j < mCols; j++) {
+            result += pow(-1, j) * matrix[0][j] * mMinor(0, j).mDeterminant();
+        }
+    }
+    return result;
 }

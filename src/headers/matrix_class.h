@@ -7,16 +7,16 @@ using namespace std;
 class Matrix{
     public:
         friend ostream &operator<<(ostream &os, const Matrix &aMatrix);
-        Matrix(int n = 0, int m = 0);               //Matrix init
+        Matrix(int rows = 1, int cols = 1);         //Matrix init
         ~Matrix();                                  //Matrix delete
-        //Matrix(const Matrix &c);                    //Matrix copy
-        //Matrix &operator=(const Matrix &matrix);    //Matrix =
+        Matrix(const Matrix &c);                    //Matrix copy
+        Matrix &operator=(const Matrix &matrix);    //Matrix =
 
-        void matrixInit();
-        double matrixDeterminant();
-        Matrix matrixMinor(int line_n, int line_m);
+        void mInit();
+        double mDeterminant();
+        Matrix mMinor(int line_n, int line_m);
     private:
-        int size_n;
-        int size_m;
+        int mRows;
+        int mCols;
         double **matrix;
 };
