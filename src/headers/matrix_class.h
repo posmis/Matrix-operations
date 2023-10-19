@@ -15,6 +15,11 @@ class Matrix{
         void mInit();
         double mDeterminant();
         Matrix mMinor(int line_n, int line_m);
+        Matrix mTranspose();
+
+        friend Matrix mSum(const Matrix &mFirst, const Matrix &mSecond);
+        friend Matrix mMult(const Matrix &mFirst, const Matrix &mSecond);
+
     private:
         int mRows;
         int mCols;

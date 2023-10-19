@@ -90,3 +90,35 @@ double Matrix::mDeterminant() {
     }
     return result;
 }
+
+Matrix Matrix::mTranspose(){
+    Matrix newMatrix(mCols, mRows);
+    for(int row = 0; row < mCols; ++row){
+        for(int col = 0; col < mRows; ++col){
+            newMatrix.matrix[row][col] = matrix[col][row];
+        }
+    }
+    return newMatrix;
+}
+
+Matrix mSum(const Matrix &mFirst, const Matrix &mSecond){
+    if((mFirst.mCols != mSecond.mCols) || (mFirst.mRows != mSecond.mRows)) exit(SIZE_ERROR);
+    Matrix result(mFirst.mRows, mFirst.mCols);
+    for(int row = 0; row < mFirst.mRows; ++row){
+        for(int col = 0; col < mFirst.mCols; ++col) result.matrix[row][col] = mFirst.matrix[row][col] + mSecond.matrix[row][col];
+    }
+    return result;
+}
+
+Matrix mMult(const Matrix &mFirst, const Matrix &mSecond){
+    if((mFirst.mRows != mSecond.mCols)) exit(SIZE_ERROR);
+    Matrix result(mFirst.mRows, mSecond.mCols);
+    for(int row = 0; row < result.mRows; ++row){
+        for(int col = 0; col < result.mCols; ++col){
+            for(int i = 0; i < mFirst.mCols; ++i){
+                result.matrix[row][col] += mFirst.matrix[row][i] * mSecond.matrix[i][col];
+            }
+        }
+    }
+    return result;
+}

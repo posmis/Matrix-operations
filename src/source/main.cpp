@@ -8,12 +8,20 @@ int main() {
     int n, m;
     cout << "Enter matrix size: ";
     cin >> n >> m;
-    Matrix newMatrix(n, m);
+    Matrix newMatrix1(n, m);
+    newMatrix1.mInit();
+    Matrix result = newMatrix1.mTranspose();
+    cout << "\n" << result;
 
-    newMatrix.mInit();
-    // cout << "\n\n" << newMatrix.mMinor(0, 1) << endl << endl;
-    // cout << newMatrix << endl;
-    cout << newMatrix.mDeterminant() << endl;
+
+    // cout << "\n\nEnter matrix size: ";
+    // cin >> n >> m;
+    // Matrix newMatrix2(n, m);
+    // newMatrix2.mInit();
+    
+    // Matrix result = mMult(newMatrix1, newMatrix2);
+    // cout << "\n\n";
+    // cout << result;
 
     return 0;
 }
